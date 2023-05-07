@@ -72,37 +72,6 @@ app.post("/login", (req, res) => {
       );
     });
 
-// app.post('/register', async (req, res) => {
-//     const { username, password } = req.body;
-//     if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/.test(password)) {
-//         return res.status(400).json({ message: 'Password does not meet the requirements' });
-//     }
-//     // Hash the password using bcrypt
-//     // bcrypt.hash(password, (err, hashedPassword) => {
-//     //     if (err) {
-//     //         console.error(err.message);
-//     //         return res.json({
-//     //           success: false,
-//     //           data: null,
-//     //           error: err.message,
-//     //         });
-//     //     }\
-//     const hash = await bcrypt.hash(password,10);
-//         connection.query('INSERT INTO users (username, hashed_password) VALUES (?, ?)', [username, hash], (err, results) => {
-//             if (err) {
-//                 console.error(err.message);
-//                 return res.json({
-//                   success: false,
-//                   data: null,
-//                   error: err.message,
-//                 });
-//             }
-
-//             return res.status(200).json({ message: 'Registration successful' });
-       
-//     });
-// });
-
 app.post(
     "/register",
     check("password")
@@ -118,15 +87,14 @@ app.post(
       const username = req.body.username;
       const password = req.body.password;
       const errors = validationResult(req);
-  
       if (!errors.isEmpty()) {
         return res.json({ errors: errors.array() });
       }
       const salt = await bcrypt.genSalt();
       const hash = await bcrypt.hash(password,salt);
       connection.query(
-        `INSERT INTO users (username, hashed_password) VALUES (?,?)`,
-        [username, hash],
+        `INSERT INTO users (username, password, hashed_password) VALUES (?,?,?)`,
+        [username,password, hash],
         (err, rows) => {
           if (err) {
             res.json({
@@ -140,7 +108,7 @@ app.post(
               res.json({
                 success: true,
                 data: {
-                  message: "create success",
+                  message: "Registration successful",
                 },
               });
             }
