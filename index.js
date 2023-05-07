@@ -90,8 +90,7 @@ app.post(
       if (!errors.isEmpty()) {
         return res.json({ errors: errors.array() });
       }
-      const salt = await bcrypt.genSalt();
-      const hash = await bcrypt.hash(password,salt);
+      const hash = await bcrypt.hash(password,10);
       connection.query(
         `INSERT INTO users (username, password, hashed_password) VALUES (?,?,?)`,
         [username,password, hash],
